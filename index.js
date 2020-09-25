@@ -1,6 +1,7 @@
+const e = require("express");
 var http = require("http");
 //TODO - Use Employee Module here
-var employees = require("./Employee");
+var employeesList = require("./Employee");
 
 console.log("Lab 03 -  NodeJs");
 
@@ -23,21 +24,32 @@ const server = http.createServer((req, res) => {
         if (req.url === '/employee') {
             //TODO - Display all details for employees in JSON format
             res.setHeader('Content-Type', 'application/json;charset=utf-8');
-            return res.end(JSON.stringify(employees));
+            return res.end(JSON.stringify(employeesList.employees));
         }
 
         if (req.url === '/employee/names') {
             //TODO - Display only all employees {first name + lastname} in Ascending order in JSON Array
             //e.g. [ "Ash Lee", "Mac Mohan", "Pritesh Patel"]
+            let tempArray = [];
+            employeesList.employees.map(x => tempArray.unshift(x["firstName"] + " " + x["lastName"]))
+            tempArray = tempArray.sort();
             res.setHeader('Content-Type', 'application/json;charset=utf-8');
-            return res.end(JSON.stringify(employees[0].id));
+            return res.end(JSON.stringify(tempArray));
+
+
+            // test = employees.map(x => x.firstName)
+            // res.setHeader('Content-Type', 'application/json;charset=utf-8');
+            // return res.end(JSON.parse(test));
         }
 
-        // if (req.url === '/employee/totalsalary') {
-        //     //TODO - Display Sum of all employees salary in given JSON format 
-        //     //e.g. { "total_salary" : 100 }
-        //     return res.end(JSON.stringify(employees.employees));
-        // }  
+        if (req.url === '/employee/totalsalary') {
+            //TODO - Display Sum of all employees salary in given JSON format 
+            //e.g. { "total_salary" : 100 }
+            let salaryArray = [];
+            employeesList.employees.map(x => salaryArray.unshift(x["Salary"]));
+            let totalSalary = salaryArray.reduce((acc, val) => { return acc + val}, 0);1
+            return res.end(JSON.stringify(totalSalary));
+        }  
     }
     res.end(`{"error": "${http.STATUS_CODES[404]}"}`)
 })
